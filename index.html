@@ -5,10 +5,7 @@
   <title>Xodimlar</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Telegram WebApp JS -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -16,47 +13,36 @@
 
 <div class="max-w-md mx-auto">
 
-  <!-- Sarlavha -->
   <h1 class="text-white text-2xl font-bold text-center mb-4">
     👥 Xodimlar ro‘yxati
   </h1>
 
-  <!-- Qidiruv -->
-  <input
-    id="search"
-    type="text"
-    placeholder="🔍 Ism, hudud yoki lavozim"
+  <input id="search"
     class="w-full p-3 rounded-xl mb-4 outline-none"
-  >
+    placeholder="🔍 Ism, hudud yoki lavozim">
 
-  <!-- Xodimlar ro‘yxati -->
   <div id="list" class="space-y-3"></div>
-
 </div>
 
 <script>
 const tg = window.Telegram.WebApp;
-tg.expand(); // Telegram Mini App ekranini kengaytiradi
+tg.expand();
 
-// 🔴 API URL — sizning Apps Script URL
-const API_URL = "https://script.google.com/macros/s/AKfycbw0euz8SWl-o0SdlJd8LaERBfDVjB8ZJhSJadeLW-MmUmds9qT2ySv6-5GY8Z1xiW4/exec";
-
-// DATA saqlash
 let DATA = [];
 
-// 🔹 JSON olish
-fetch(API_URL)
+// ⚠️ ENG MUHIM JOY
+fetch(location.href + "?data=1")
   .then(r => r.json())
   .then(data => {
     DATA = data;
     render(DATA);
   })
-  .catch(() => {
+  .catch(err => {
     document.getElementById("list").innerHTML =
       "<div class='bg-red-100 p-4 rounded'>❌ Ma’lumot yuklanmadi</div>";
+    console.error(err);
   });
 
-// 🔹 Xodimlar ro‘yxatini chizish
 function render(arr){
   const list = document.getElementById("list");
   list.innerHTML = "";
@@ -70,27 +56,26 @@ function render(arr){
   arr.forEach(o => {
     list.innerHTML += `
       <div class="bg-white rounded-2xl p-4 shadow">
-        <div class="text-lg font-bold text-indigo-700">
+        <div class="font-bold text-indigo-700 text-lg">
           ${o["Ф.И.Ш"] || ""}
         </div>
-        <div class="text-sm text-gray-700 mt-1">
+        <div class="text-sm text-gray-700">
           📍 ${o["Hudud"] || ""}<br>
           🏢 ${o["Ish joyi"] || ""}<br>
           👔 ${o["Лавозим"] || ""}
         </div>
-      </div>
-    `;
+      </div>`;
   });
 }
 
-// 🔍 Qidiruv funksiyasi
-document.getElementById("search").addEventListener("input", function(){
+document.getElementById("search").oninput = function(){
   const q = this.value.toLowerCase();
-  const filtered = DATA.filter(o =>
-    Object.values(o).join(" ").toLowerCase().includes(q)
+  render(
+    DATA.filter(o =>
+      Object.values(o).join(" ").toLowerCase().includes(q)
+    )
   );
-  render(filtered);
-});
+};
 </script>
 
 </body>
